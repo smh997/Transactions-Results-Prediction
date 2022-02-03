@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import random
 
 
@@ -40,16 +41,36 @@ def preprocess(dataset: pd.DataFrame):
     train_dataset = train_dataset.drop(
         ['Account', 'Opportunity_ID', 'Sales_Agent', 'SalesAgentEmailID', 'ContactEmailID', 'Created Date',
          'Close Date', 'Product_Mean_Date_Diff'], axis=1)
+    in_progress_dataset = in_progress_dataset.drop(
+        ['Account', 'Opportunity_ID', 'Sales_Agent', 'SalesAgentEmailID', 'ContactEmailID', 'Created Date',
+         'Close Date', 'Product_Mean_Date_Diff'], axis=1)
 
-    # Balancing data
+    # Separating targets from train dataset
+    targets = train_dataset['Deal_Stage']
+    train_dataset = train_dataset.drop(['Deal_Stage'], axis=1)
+    in_progress_dataset = in_progress_dataset.drop(['Deal_Stage'], axis=1)
 
-    # Removing additional Won labeled data at random
+    # One-Hot encoding the product feature as a categorical data
+    train_dataset = train_dataset.join(pd.get_dummies(train_dataset['Product'])).drop('Product', axis=1)
+    in_progress_dataset = in_progress_dataset.join(pd.get_dummies(in_progress_dataset['Product'])).drop('Product',
+                                                                                                        axis=1)
+
+    # Removing Outliers
+    from scipy import stats
+    z_scores = stats.zscore(train_dataset)
+    abs_z_scores = np.abs(z_scores)
+    filtered_entries = (abs_z_scores < 3).all(axis=1)
+    train_dataset = train_dataset[filtered_entries]
+    targets = targets[filtered_entries]
+
+    # Balancing data:
+    # Removing additional Won labeled data in random
     size = len(train_dataset) - 1
     won_indices = []
     won_cnt = 0
     remove_indices = []
-    for i, x1 in train_dataset.iterrows():
-        if x1['Deal_Stage'] == 'Won':
+    for i, label in targets.items():
+        if label == 'Won':
             won_indices.append(i)
             won_cnt += 1
     lost_cnt = size - won_cnt
@@ -59,12 +80,6 @@ def preprocess(dataset: pd.DataFrame):
         won_indices.pop(r_index)
 
     train_dataset.drop(remove_indices, inplace=True, axis=0)
-
-    # Separating targets from train dataset
-    targets = train_dataset['Deal_Stage']
-    train_dataset = train_dataset.drop(['Deal_Stage'], axis=1)
-
-    # One-Hot encoding the product feature as a categorical data
-    train_dataset = train_dataset.join(pd.get_dummies(train_dataset['Product'])).drop('Product', axis=1)
+    targets.drop(remove_indices, inplace=True, axis=0)
 
     return train_dataset, targets, in_progress_dataset
