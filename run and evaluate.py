@@ -33,39 +33,40 @@ for i in range(1, 16, 2):
 
 # Error rate
 plt.figure(figsize=(10, 6))
-plt.plot(range(1, 16, 2), error_rate, color='purple', linestyle='dashed',
+plt.plot(range(1, 30, 2), error_rate, color='purple', linestyle='dashed',
          marker='8', markerfacecolor='pink', markersize=10)
 plt.title('Error Rate / K Value')
 plt.xlabel('K')
 plt.ylabel('Error Rate')
-print("Minimum error:-", min(error_rate), "at K =", error_rate.index(min(error_rate)))
+print("Minimum error:-", min(error_rate), "at K =", (error_rate.index(min(error_rate)) * 2) + 1)
 
 # Accuracy
 plt.figure(figsize=(10, 6))
-plt.plot(range(1, 16, 2), acc, color='green', linestyle='solid',
+plt.plot(range(1, 30, 2), acc, color='green', linestyle='solid',
          marker='D', markerfacecolor='lime', markersize=10)
 plt.title('Accuracy / K Value')
 plt.xlabel('K')
 plt.ylabel('Accuracy')
-print("Maximum accuracy:-", max(acc), "at K =", acc.index(max(acc)))
+print("Maximum accuracy:-", max(acc), "at K =", (acc.index(max(acc)) * 2) + 1)
 
 # F1-score of Won
 plt.figure(figsize=(10, 6))
-plt.plot(range(1, 16, 2), f1_Won, color='blue', linestyle='solid',
+plt.plot(range(1, 30, 2), f1_Won, color='blue', linestyle='solid',
          marker='s', markerfacecolor='gray', markersize=10)
 plt.title('F1-score of Won labels / K Value')
 plt.xlabel('K')
 plt.ylabel('F1-score of Won labels')
-print("Minimum f1-score:-", min(f1_Won), "at K =", f1_Won.index(min(f1_Won)))
+print("Maximum f1-score:-", max(f1_Won), "at K =", (f1_Won.index(max(f1_Won)) * 2) + 1)
 
 # F1-score of Lost
 plt.figure(figsize=(10, 6))
-plt.plot(range(1, 16, 2), f1_Lost, color='red', linestyle='dashed',
+plt.plot(range(1, 30, 2), f1_Lost, color='red', linestyle='dashed',
          marker='p', markerfacecolor='gold', markersize=10)
 plt.title('F1-score of Lost labels / K Value')
 plt.xlabel('K')
 plt.ylabel('F1-score of Lost labels')
-print("Maximum f1-score:-", max(f1_Lost), "at K =", f1_Lost.index(max(f1_Lost)))
+print("Maximum f1-score:-", max(f1_Lost), "at K =", (f1_Lost.index(max(f1_Lost)) * 2) + 1)
+
 
 # Classifying data with our KNN classifier
 clf = KNearestNeighbors(3)
