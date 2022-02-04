@@ -107,5 +107,5 @@ classification_data_report('sklearn DT', y_test, dt_pred)
 # Predicting in-progress transactions results
 clf.fit(train_dataset, targets)
 predicted_data = clf.predict(in_progress_dataset)
-in_progress_dataset['Deal_Stage'] = in_progress_dataset.apply(lambda row: predicted_data[row.level_0], axis=1)
+in_progress_dataset['Deal_Stage'] = predicted_data
 in_progress_dataset.to_csv('prediction.csv')
