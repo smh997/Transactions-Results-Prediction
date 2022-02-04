@@ -15,10 +15,14 @@ def preprocess(dataset: pd.DataFrame):
 
     # Feature creation -> Product_Mean_Date_Diff (Mean of DateDiff for different products)
     for product in dataset['Product'].unique():
-        dataset.loc[(dataset['Product'] == product), 'Product_Mean_Date_Diff'] = dataset['DateDiff'].where(dataset['Product'] == product).sum() / ((dataset['Product'] == product).where(dataset['Deal_Stage'] == 'Won').sum())
+        dataset.loc[(dataset['Product'] == product), 'Product_Mean_Date_Diff'] = \
+            dataset['DateDiff'].where(dataset['Product'] == product).sum() / ((dataset['Product'] == product).where(
+                dataset['Deal_Stage'] == 'Won').sum())
     # Feature creation -> Win_Rate (Rate of won per sales agent)
     for agent in dataset['Sales_Agent'].unique():
-        dataset.loc[(dataset['Sales_Agent'] == agent), 'Win_Rate'] = ((dataset['Deal_Stage'] == 'Won').where(dataset['Sales_Agent'] == agent).sum() / (dataset['Sales_Agent'] == agent).sum())
+        dataset.loc[(dataset['Sales_Agent'] == agent), 'Win_Rate'] = \
+            ((dataset['Deal_Stage'] == 'Won').where(
+                dataset['Sales_Agent'] == agent).sum() / (dataset['Sales_Agent'] == agent).sum())
 
     # Modifying column DateDiff to be 1 if DateDiff is less than Product_Mean_Date_Diff or 0 otherwise
     for i in range(0, len(dataset)):
@@ -62,24 +66,5 @@ def preprocess(dataset: pd.DataFrame):
     filtered_entries = (abs_z_scores < 3).all(axis=1)
     train_dataset = train_dataset[filtered_entries]
     targets = targets[filtered_entries]
-
-    # Balancing data:
-    # Removing additional Won labeled data in random
-    size = len(train_dataset) - 1
-    won_indices = []
-    won_cnt = 0
-    remove_indices = []
-    for i, label in targets.items():
-        if label == 'Won':
-            won_indices.append(i)
-            won_cnt += 1
-    lost_cnt = size - won_cnt
-    for i in range((won_cnt - lost_cnt)):
-        r_index = random.randint(0, won_cnt - i - 1)
-        remove_indices.append(won_indices[r_index])
-        won_indices.pop(r_index)
-
-    train_dataset.drop(remove_indices, inplace=True, axis=0)
-    targets.drop(remove_indices, inplace=True, axis=0)
 
     return train_dataset, targets, in_progress_dataset
