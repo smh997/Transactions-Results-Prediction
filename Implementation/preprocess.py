@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import random
 
 
 def preprocess(dataset: pd.DataFrame):
@@ -15,14 +14,10 @@ def preprocess(dataset: pd.DataFrame):
 
     # Feature creation -> Product_Mean_Date_Diff (Mean of DateDiff for different products)
     for product in dataset['Product'].unique():
-        dataset.loc[(dataset['Product'] == product), 'Product_Mean_Date_Diff'] = \
-            dataset['DateDiff'].where(dataset['Product'] == product).sum() / ((dataset['Product'] == product).where(
-                dataset['Deal_Stage'] == 'Won').sum())
+        dataset.loc[(dataset['Product'] == product), 'Product_Mean_Date_Diff'] = dataset['DateDiff'].where(dataset['Product'] == product).sum() / ((dataset['Product'] == product).where(dataset['Deal_Stage'] == 'Won').sum())
     # Feature creation -> Win_Rate (Rate of won per sales agent)
     for agent in dataset['Sales_Agent'].unique():
-        dataset.loc[(dataset['Sales_Agent'] == agent), 'Win_Rate'] = \
-            ((dataset['Deal_Stage'] == 'Won').where(
-                dataset['Sales_Agent'] == agent).sum() / (dataset['Sales_Agent'] == agent).sum())
+        dataset.loc[(dataset['Sales_Agent'] == agent), 'Win_Rate'] = ((dataset['Deal_Stage'] == 'Won').where(dataset['Sales_Agent'] == agent).sum() / (dataset['Sales_Agent'] == agent).sum())
 
     # Modifying column DateDiff to be 1 if DateDiff is less than Product_Mean_Date_Diff or 0 otherwise
     for i in range(0, len(dataset)):
