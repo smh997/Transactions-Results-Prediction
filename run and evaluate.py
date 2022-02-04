@@ -22,7 +22,7 @@ error_rate = []
 acc = []
 f1_Won = []
 f1_Lost = []
-for i in range(1, 16, 2):
+for i in range(1, 30, 2):
     knn = KNeighborsClassifier(n_neighbors=i)
     knn.fit(X_train, y_train)
     predict = knn.predict(X_test)
